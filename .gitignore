@@ -1,0 +1,11 @@
+
+__pycache__
+.vscode
+build
+dist
+temp.txt
+*.docx
+*.7z
+*.exe
+*.spec
+output.*
