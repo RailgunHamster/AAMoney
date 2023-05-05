@@ -115,6 +115,6 @@ class TextToImage:
 
 
 if __name__ == "__main__":
-    TextToImage("output.txt", ["下面是详细过程信息", "合计"], "豆汁儿工益小组专用").to_image().save(
+    TextToImage("output.txt", ["详细过程信息", "合计"], "XXXX小组专用").to_image().save(
         "output.jpg"
     )
