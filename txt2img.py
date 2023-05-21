@@ -11,7 +11,7 @@ class TextToImage:
                 self.text = file.readlines()
         else:
             self.text = text_or_path
-        print("text: ", self.text)
+        print("\ntext: ", self.text)
 
         def get_break_point(btext):
             middle = 0
@@ -31,7 +31,7 @@ class TextToImage:
         for i in range(break_point_len - 1):
             self.texts.append((self.break_points[i], self.break_points[i + 1]))
         self.texts.append((self.break_points[-1], None))
-        print(self.texts)
+        print("\ntexts:", self.texts)
 
     def get_text(self, i: int):
         i = self.texts[i]
@@ -66,8 +66,8 @@ class TextToImage:
             return max(self.map_text(len))
 
     def to_image(self):
-        max_line = self.max_line()
-        line_length = self.line_length()
+        max_line = self.max_line([1, 2])
+        line_length = self.line_length([0]) + self.line_length([1, 2])
         print("max_line: ", max_line)
         print("line_length: ", line_length)
 
@@ -76,19 +76,19 @@ class TextToImage:
         factor = (0.8, 1.35)
         padding = (30, 30)
 
-        def get_size(x, y):
+        def get_size(x, y, font_size):
             return (
                 int(factor[0] * font_size * x + padding[0]),
                 int(factor[1] * font_size * y + padding[1]),
             )
 
-        size = get_size(max_line, line_length)
+        size = get_size(max_line, line_length, 30)
         image = Image.new(
             "RGB",
             size,
             color=(255, 255, 255),
         )
-        posTitle = get_size(0, 0)
+        posTitle = get_size(0, 0, font_size * 1.5)
         ImageDraw.Draw(image).text(
             posTitle,
             self.water_mark,
@@ -96,21 +96,28 @@ class TextToImage:
             ImageFont.truetype(font, int(font_size * 1.5)),
         )
 
-        def draw_text(i: int):
-            start = 0
-            if i > 0:
-                start = self.max_line(range(i))
-            middle = (line_length / 2) - (self.line_length(i) / 2)
-            pos = get_size(start, middle)
+        def draw_text(i: int, y, font_size, color):
+            if i == 0:
+                start = self.max_line(0)
+                # TODO 计算出只放texts[1]的middle
+                middle = 1
+            else:
+                start = self.max_line(range(1, i))
+                middle = (line_length / 2) - (self.line_length(i) / 2)
+            pos = get_size(start, middle, font_size)
+            xy = tuple((pos[0], pos[1] + y))
             ImageDraw.Draw(image).text(
-                pos,
+                xy,
                 "".join(self.get_text(i)),
-                (0, 0, 0),
+                color,
                 ImageFont.truetype(font, font_size),
             )
+            # TODO 计算出放了转账记录后的y，以便将后一个区域往下放
+            return pos[1]
 
-        for i in range(len(self.texts)):
-            draw_text(i)
+        start = draw_text(0, 0, 40, (255, 51, 0))
+        for i in range(1, len(self.texts)):
+            draw_text(i, start, 30, (0, 0, 0))
         return image
 
 
