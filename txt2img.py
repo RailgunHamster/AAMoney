@@ -67,13 +67,13 @@ class TextToImage:
 
     def to_image(self):
         max_line = self.max_line([1, 2])
-        line_length = self.line_length([0]) + self.line_length([1, 2])
+        line_length = 2 + self.line_length([0]) + self.line_length([1, 2])
         print("max_line: ", max_line)
         print("line_length: ", line_length)
 
         font = "font.ttc"
         font_size = 30
-        factor = (0.8, 1.35)
+        factor = (0.8, 1.4)
         padding = (30, 30)
 
         def get_size(x, y, font_size):
@@ -98,12 +98,16 @@ class TextToImage:
 
         def draw_text(i: int, y, font_size, color):
             if i == 0:
-                start = self.max_line(0)
+                start = (max_line / 2) - (self.max_line(0) / 2)
                 # TODO 计算出只放texts[1]的middle
-                middle = 1
+                middle = 2
             else:
                 start = self.max_line(range(1, i))
-                middle = (line_length / 2) - (self.line_length(i) / 2)
+                middle = (
+                    self.line_length(0)
+                    + (self.line_length([1, 2]) / 2)
+                    - (self.line_length(i) / 2)
+                )
             pos = get_size(start, middle, font_size)
             xy = tuple((pos[0], pos[1] + y))
             ImageDraw.Draw(image).text(
