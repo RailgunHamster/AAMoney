@@ -73,7 +73,7 @@ class TextToImage:
 
         font = "font.ttc"
         font_size = 30
-        factor = (0.8, 1.4)
+        factor = (0.8, 1.5)
         padding = (30, 30)
 
         def get_size(x, y, font_size):
