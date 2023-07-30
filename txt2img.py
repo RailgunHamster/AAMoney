@@ -33,7 +33,6 @@ class TextToImage:
         self.texts.append((self.break_points[-1], None))
         print("\ntexts:", self.texts)
 
-
     def get_text(self, i: int):
         i = self.texts[i]
         return self.text[i[0] : i[1]]
@@ -50,6 +49,7 @@ class TextToImage:
     def max_line(self, i=None):
         def max_line_single(txt):
             return max(map(lambda t: len(t), txt))
+
         if type(i) is int:
             return max_line_single(self.get_text(i))
         if type(i) is range or type(i) is list:
@@ -118,9 +118,18 @@ class TextToImage:
             )
             # TODO 计算出放了转账记录后的y，以便将后一个区域往下放
             return pos[1]
+
         start = draw_text(0, 0, 40, (255, 51, 0))
         for i in range(1, len(self.texts)):
             draw_text(i, start, 30, (0, 0, 0))
+        # 水印
+        watermark = "本程序由<豆汁儿工益小组>设计并实现"
+        ImageDraw.Draw(image).text(
+            (padding[0], size[1] - 2 * padding[1]),
+            watermark,
+            (0, 191, 255),
+            ImageFont.truetype(font, font_size),
+        )
         return image
 
 
